@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["es6", "dom"],
+    "module": "esnext", //commonjs destroys 'dynamic imports' which is used for code splitting
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "index.d.ts"],
+  "exclude": [
+    "node_modules/**/*",
+    ".parcel-cache/**/*",
+    ".husky/**/*",
+    ".dist/**/*"
+  ]
+}
