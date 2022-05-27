@@ -3,9 +3,8 @@ import "reset-css/reset.css";
 import { useEffect, useState, useMemo, useCallback } from "react";
 
 import * as React from "react";
-import { NoPriorityTabs } from "./styles";
-import { List, ListItem } from "../components/List";
 import { TabList } from "../components/TabList";
+import { detectTabWithCounter } from "../services/detectTabWithCounter";
 
 const selectTabs = [
   "calendar.google.com",
@@ -64,6 +63,21 @@ export function App() {
   };
 
   getInitialTabs(setTabs);
+
+  useEffect(() => {
+    const tabsWithCounter = detectTabWithCounter(tabs);
+    if (tabsWithCounter.length === 0) {
+      return;
+    }
+    setPriority((prevState) => {
+      const newState = { ...prevState };
+      for (let i = 0; i < tabsWithCounter.length; i++) {
+        const tabId = tabsWithCounter[i];
+        newState[tabId] = (newState[tabId] || 0) + 1;
+      }
+      return newState;
+    });
+  }, [tabs]);
 
   onUpdatedTabHook((tabId, changeInfo, updatedTab) => {
     setPriority((prevState) => {

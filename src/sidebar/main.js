@@ -2,9 +2,9 @@ import "reset-css/reset.css";
 
 import { createRoot } from "react-dom/client";
 import * as React from "react";
-import { App } from "./App";
 
 import { createGlobalStyle } from "styled-components";
+import { App } from "./containers/App";
 
 const GlobalStyle = createGlobalStyle`
   body {

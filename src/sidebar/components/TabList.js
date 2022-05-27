@@ -26,19 +26,21 @@ function PriorityTabs({ priorityTabs, onClick }) {
   );
 }
 export function TabList({ priorityTabs, onClick, normalTabs }) {
-  return <>
-    <PriorityTabs priorityTabs={priorityTabs} onClick={onClick} />
-    <hr />
-    <List>
-      {normalTabs.map((tab) => (
-        <ListItem
-          key={tab.id}
-          icon={tab.favIconUrl}
-          title={tab.title}
-          subtitle={tab.url}
-          onClick={onClick(tab)}
-        />
-      ))}
-    </List>
-  </>;
+  return (
+    <>
+      <PriorityTabs priorityTabs={priorityTabs} onClick={onClick} />
+      <hr />
+      <List>
+        {normalTabs.map((tab) => (
+          <ListItem
+            key={tab.id}
+            icon={tab.favIconUrl}
+            title={tab.title}
+            subtitle={tab.url}
+            onClick={onClick(tab)}
+          />
+        ))}
+      </List>
+    </>
+  );
 }
