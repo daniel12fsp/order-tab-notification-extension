@@ -1,3 +1,4 @@
+import { ITab } from "../interface/Tab.interface";
 import {
   ITabService,
   OnUpdatedCallBack,
@@ -5,6 +6,19 @@ import {
 
 export class BrowserTabService implements ITabService {
   constructor(private browser) {}
+  onCreated(callback: (tab: ITab) => void): () => void {
+    this.browser.tabs.onCreated.addListener(callback);
+    return () => {
+      this.browser.tabs.onCreated.removeListener(callback);
+    };
+  }
+
+  onRemoved(callback: (tabId: number) => void): () => void {
+    this.browser.tabs.onRemoved.addListener(callback);
+    return () => {
+      this.browser.tabs.onRemoved.removeListener(callback);
+    };
+  }
 
   get() {
     return this.browser.tabs.query({ currentWindow: true });

@@ -1,4 +1,6 @@
-export const mockedTabs = [
+import { ITab } from "../interface/Tab.interface";
+
+export const mockedTabs: ITab[] = [
   {
     id: 2,
     index: 0,
@@ -87,7 +89,7 @@ export const mockedTabs = [
     active: false,
     attention: false,
     pinned: true,
-    status: "complete",
+    status: "loading",
     hidden: false,
     discarded: false,
     incognito: false,

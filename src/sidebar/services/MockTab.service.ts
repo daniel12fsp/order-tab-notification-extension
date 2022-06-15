@@ -1,8 +1,17 @@
+import { ITab } from "../interface/Tab.interface";
 import { ITabService } from "../interface/TabService.interface";
 import { mockedTabs } from "../mocked/mockedTabs";
 
 export class MockTabService implements ITabService {
-  get() {
+  onCreated(_callback: (tab: ITab) => void) {
+    return () => {};
+  }
+
+  onRemoved(_callback: (tabId: number) => void) {
+    return () => {};
+  }
+
+  get(): Promise<ITab[]> {
     return Promise.resolve(mockedTabs);
   }
 

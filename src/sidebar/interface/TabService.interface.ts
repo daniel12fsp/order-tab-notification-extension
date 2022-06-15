@@ -1,3 +1,5 @@
+import { ITab } from "./Tab.interface";
+
 export type OnUpdatedCallBack = (
   tabId: number,
   _changeInfo: {},
@@ -8,6 +10,8 @@ export interface ITabService {
   onUpdated: (
     onUpdated: OnUpdatedCallBack,
     filter: Record<string, any>
-  ) => void;
-  update: (id: number, tab: ITab) => Promise<void>;
+  ) => () => void;
+  onCreated: (callback: (tab?: ITab) => void) => () => void;
+  onRemoved: (callback: (tabId: number) => void) => () => void;
+  update: (id: number, tab: Partial<ITab>) => Promise<void>;
 }

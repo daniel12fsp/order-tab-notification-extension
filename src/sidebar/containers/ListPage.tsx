@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { detectTabWithCounter } from "../services/detectTabWithCounter";
 import { CompactTabList } from "../components/CompactTabList";
 import { TabServiceFactory } from "../factory/tabService.factory";
+import { ITab } from "../interface/Tab.interface";
 
 // TODO make selectTabs be configurable
 const selectTabs = [
@@ -16,30 +17,24 @@ const selectTabs = [
 
 const tabService = TabServiceFactory.create();
 
-function sortString(n1: string, n2: string) {
-  if (n1 > n2) {
-    return 1;
-  }
-  if (n1 < n2) {
-    return -1;
-  }
-  return 0;
-}
+export type Priorities = Record<string, number>;
 
 export function ListPage() {
   const [tabs, setTabs] = useState<ITab[]>([]);
-  const [priority, setPriority] = useState<Record<string, number>>({});
+  const [priorities, setPriorities] = useState<Priorities>({});
 
   const filter: Record<string, any> = {
-    properties: ["attention", "favIconUrl", "title"],
+    properties: ["attention", "favIconUrl", "title", "status"],
   };
 
   useEffect(() => {
     function onUpdatedTab(tabId: number, _changeInfo: {}, updatedTab: ITab) {
       console.log("onUpdatedTab", { tabId, _changeInfo, updatedTab });
-      setPriority((prevState) => {
+
+      setPriorities((prevState) => {
         const priority = (prevState[tabId] || 0) + 1;
-        const newPriority = updatedTab.active ? 0 : priority;
+        const newPriority =
+          updatedTab.active && updatedTab.status === "complete" ? 0 : priority;
         return {
           ...prevState,
           [tabId]: newPriority,
@@ -61,6 +56,21 @@ export function ListPage() {
 
   useEffect(() => {
     tabService.get().then(setTabs);
+
+    const onCreatedCallback = () => {
+      tabService.get().then(setTabs);
+    };
+
+    const onRemovedCallback = (tabId: number) => {
+      setTabs((prevTabs) => prevTabs.filter((tab) => tab.id !== tabId));
+    };
+
+    const removeListeneronCreated = tabService.onCreated(onCreatedCallback);
+    const removeListeneronRemoved = tabService.onRemoved(onRemovedCallback);
+    return () => {
+      removeListeneronCreated();
+      removeListeneronRemoved();
+    };
   }, []);
 
   useEffect(() => {
@@ -68,7 +78,7 @@ export function ListPage() {
     if (tabsWithCounter.length === 0) {
       return;
     }
-    setPriority((prevState) => {
+    setPriorities((prevState) => {
       const newState = { ...prevState };
       for (const tabId of tabsWithCounter) {
         newState[tabId] = (newState[tabId] || 0) + 1;
@@ -77,15 +87,12 @@ export function ListPage() {
     });
   }, [tabs]);
 
-  const orderTabs = useMemo(() => {
-    const orderTabs = [...tabs].filter((tab) =>
+  const seletedTabs = useMemo(() => {
+    const seletedTabs = [...tabs].filter((tab) =>
       selectTabs.find((selectTab) => tab.url.includes(selectTab))
     );
-    orderTabs
-      .sort((a, b) => sortString(a.title.toLowerCase(), b.title.toLowerCase()))
-      .sort((a, b) => (priority[b.id] || 0) - (priority[a.id] || 0));
-    return orderTabs;
-  }, [priority, tabs]);
+    return seletedTabs;
+  }, [tabs]);
 
   const onClick = useCallback(
     (tab) => () => {
@@ -94,7 +101,7 @@ export function ListPage() {
           active: true,
         })
         .then(() => {
-          setPriority((prevState) => ({
+          setPriorities((prevState) => ({
             ...prevState,
             [tab.id]: 0,
           }));
@@ -103,21 +110,11 @@ export function ListPage() {
     []
   );
 
-  const { priorityTabs, normalTabs } = useMemo(() => {
-    const priorityTabs = orderTabs.filter((tab) => priority[tab.id] > 0);
-    const normalTabs = orderTabs.filter(
-      (tab) => priority[tab.id] === 0 || !priority[tab.id]
-    );
-
-    return { priorityTabs, normalTabs };
-  }, [priority, tabs, orderTabs]);
-
   return (
     <CompactTabList
-      priorityTabs={priorityTabs}
+      tabs={seletedTabs}
       onClick={onClick}
-      normalTabs={normalTabs}
-      priority={priority}
+      priority={priorities}
     />
   );
 }

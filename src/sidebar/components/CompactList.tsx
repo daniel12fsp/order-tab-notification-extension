@@ -1,4 +1,6 @@
 import styled, { keyframes } from "styled-components";
+import { ITab } from "../interface/Tab.interface";
+import { Loading } from "./Loading";
 
 const Ul = styled.ul`
   display: flex;
@@ -23,6 +25,8 @@ const ListItemContainer = styled.li`
   &:hover {
     background-color: #443355;
   }
+  height: 80px;
+  width: 80px;
 `;
 
 const ImageContainer = styled.div`
@@ -64,6 +68,12 @@ const Icon = styled.img`
   padding: 5px;
 `;
 
+const Hostname = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const Label = styled.div`
   font-size: 10px;
 `;
@@ -74,6 +84,8 @@ interface CompactListItemProps {
   notification: boolean;
   onClick: () => void;
   title: string;
+  status: ITab["status"];
+  hostname: string;
 }
 
 export function CompactListItem({
@@ -82,7 +94,18 @@ export function CompactListItem({
   onClick,
   notification,
   label,
+  status,
+  hostname,
 }: CompactListItemProps) {
+  if (status === "loading") {
+    return (
+      <ListItemContainer>
+        <Loading />
+        <Hostname>{hostname}</Hostname>
+      </ListItemContainer>
+    );
+  }
+
   return (
     <ListItemContainer onClick={onClick}>
       <ImageContainer title={title}>

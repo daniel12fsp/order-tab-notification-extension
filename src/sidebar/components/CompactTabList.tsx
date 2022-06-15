@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { Priorities } from "../containers/ListPage";
+import { ITab } from "../interface/Tab.interface";
 import { CompactList, CompactListItem } from "./CompactList";
 
 export const NoPriorityTabs = styled.div`
@@ -37,26 +39,33 @@ const label = {
   },
 };
 
+interface CompactTabListProps {
+  tabs: ITab[];
+  onClick: (tab: any) => () => void;
+  priority: Priorities;
+}
+
 export function CompactTabList({
-  priorityTabs,
   onClick,
-  normalTabs,
   priority,
-}) {
+  tabs,
+}: CompactTabListProps) {
   return (
     <CompactList>
-      {[...priorityTabs, ...normalTabs].map((tab) => {
+      {tabs.map((tab: ITab) => {
         const { hostname } = new URL(tab.url);
-        const func = label[hostname] || (() => {});
+        const func = label[hostname] || (() => undefined);
 
         return (
           <CompactListItem
             key={tab.id}
             icon={tab.favIconUrl}
+            hostname={hostname}
             title={tab.title}
             onClick={onClick(tab)}
             notification={(priority[tab.id] || 0) > 0}
             label={func(tab)}
+            status={tab.status}
           />
         );
       })}
