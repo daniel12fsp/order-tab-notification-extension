@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { detectTabWithCounter } from "../services/detectTabWithCounter";
 import { CompactTabList } from "../components/CompactTabList";
-import { TabServiceFactory } from "../factory/tabService.factory";
 import { ITab } from "../interface/Tab.interface";
+import { ITabService } from "../interface/TabService.interface";
 
 // TODO make selectTabs be configurable
 const selectTabs = [
@@ -15,17 +15,18 @@ const selectTabs = [
   "messages.google.com",
 ];
 
-const tabService = TabServiceFactory.create();
-
 export type Priorities = Record<string, number>;
+const filter: Record<string, any> = {
+  properties: ["attention", "favIconUrl", "title", "status"],
+};
 
-export function ListPage() {
+interface ListPageProps {
+  tabService: ITabService;
+}
+
+export function ListPage({ tabService }: ListPageProps) {
   const [tabs, setTabs] = useState<ITab[]>([]);
   const [priorities, setPriorities] = useState<Priorities>({});
-
-  const filter: Record<string, any> = {
-    properties: ["attention", "favIconUrl", "title", "status"],
-  };
 
   useEffect(() => {
     function onUpdatedTab(tabId: number, _changeInfo: {}, updatedTab: ITab) {
@@ -52,7 +53,7 @@ export function ListPage() {
     }
     const removeListener = tabService.onUpdated(onUpdatedTab, filter);
     return () => removeListener();
-  }, []);
+  }, [tabService]);
 
   useEffect(() => {
     tabService.get().then(setTabs);
@@ -71,7 +72,7 @@ export function ListPage() {
       removeListeneronCreated();
       removeListeneronRemoved();
     };
-  }, []);
+  }, [tabService]);
 
   useEffect(() => {
     const tabsWithCounter = detectTabWithCounter(tabs);
@@ -107,7 +108,7 @@ export function ListPage() {
           }));
         });
     },
-    []
+    [tabService]
   );
 
   return (

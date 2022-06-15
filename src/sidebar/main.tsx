@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 
 import { createGlobalStyle } from "styled-components";
 import { App } from "./containers/App";
+import { TabServiceFactory } from "./factory/tabService.factory";
 
 const GlobalStyle = createGlobalStyle`
 html,
@@ -38,11 +39,11 @@ document.body.appendChild(newRootElem);
 
 async function main() {
   const root = createRoot(newRootElem);
-
+  const tabService = await TabServiceFactory.create();
   root.render(
     <>
       <GlobalStyle />
-      <App />
+      <App tabService={tabService} />
     </>
   );
 }

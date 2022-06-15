@@ -99,7 +99,7 @@ export function CompactListItem({
 }: CompactListItemProps) {
   if (status === "loading") {
     return (
-      <ListItemContainer>
+      <ListItemContainer onClick={onClick} title={title}>
         <Loading />
         <Hostname>{hostname}</Hostname>
       </ListItemContainer>
@@ -107,8 +107,8 @@ export function CompactListItem({
   }
 
   return (
-    <ListItemContainer onClick={onClick}>
-      <ImageContainer title={title}>
+    <ListItemContainer onClick={onClick} title={title}>
+      <ImageContainer>
         <Icon src={icon} />
         {notification && <NotificationIcon />}
         {label && <Label> {label}</Label>}
