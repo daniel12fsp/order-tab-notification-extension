@@ -5,11 +5,11 @@
     }
   },
   "description": "A list of priority tabs",
-  "homepage_url": "https://github.com/daniel12fsp/order-tab-notification-extension",
+  "homepage_url": "https://github.com/daniel12fsp/priority-tabs-extension",
   "manifest_version": 2,
   "name": "Priority tabs",
   "permissions": ["tabs"],
-  "version": "1.0",
+  "version": "1.0.1",
   "sidebar_action": {
     "default_title": "Priority tabs",
     "default_panel": "index.html",
